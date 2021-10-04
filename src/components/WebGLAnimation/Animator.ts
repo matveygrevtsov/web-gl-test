@@ -60,7 +60,47 @@ export class Animator {
     const vertexBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
 
-    const vertexArray = [0.0, 0.5, 0.5, -0.5, -0.5, -0.5]
+    const vertexArray = [
+      // ТРЕУГОЛЬНИК 1 (КРАСНЫЙ)
+      0.0, // вершина1 x
+      0.3, // вершина1 y
+      0.0, // вершина1 z
+      1.0, // вершина1 r
+      0.0, // вершина1 g
+      0.0, // вершина1 b
+      0.5, // вершина2 x
+      -0.8, // вершина2 y
+      0.0, // вершина2 z
+      1.0, // вершина2 r
+      0.0, // вершина2 g
+      0.0, // вершина2 b
+      -0.5, // вершина3 x
+      -0.8, // вершина3 y
+      0.0, // вершина3 z
+      1.0, // вершина3 r
+      0.0, // вершина3 g
+      0.0, // вершина3 b
+
+      // ТРЕУГОЛЬНИК 2 (СИНИЙ)
+      0.0, // вершина1 x
+      -0.3, // вершина1 y
+      0.5, // вершина1 z
+      0.0, // вершина1 r
+      0.0, // вершина1 g
+      1.0, // вершина1 b
+      0.5, // вершина2 x
+      0.8, // вершина2 y
+      0.5, // вершина2 z
+      0.0, // вершина2 r
+      0.0, // вершина2 g
+      1.0, // вершина2 b
+      -0.5, // вершина3 x
+      0.8, // вершина3 y
+      0.5, // вершина3 z
+      0.0, // вершина3 r
+      0.0, // вершина3 g
+      1.0, // вершина3 b
+    ]
 
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -68,7 +108,7 @@ export class Animator {
       gl.STATIC_DRAW,
     )
 
-    // передаём данные из буфера в шейдер [начало]
+    // ПЕРЕДАЁМ ДАННЫЕ ИЗ БУФЕРА (ПОЗИЦИЮ) В ВЕРШИННЫЙ ШЕЙДЕР [НАЧАЛО]
 
     // создаём ссылку на аттрибут
     const positionAttribLocation = gl.getAttribLocation(
@@ -79,19 +119,38 @@ export class Animator {
     // Укажем, каким именно способом нужно передать данные из буфера
     gl.vertexAttribPointer(
       positionAttribLocation, // ссылка на аттрибут
-      2, // кол-во элементов массива на одну итерацию
+      3, // кол-во элементов массива на одну итерацию
       gl.FLOAT, // тип данных
       false,
-      2 * Float32Array.BYTES_PER_ELEMENT, // кол-во элементов массива на одну вершину
+      6 * Float32Array.BYTES_PER_ELEMENT, // кол-во элементов массива на одну вершину
       0 * Float32Array.BYTES_PER_ELEMENT,
     )
 
     gl.enableVertexAttribArray(positionAttribLocation)
+    // [КОНЕЦ]
+
+    // ПЕРЕДАЁМ ДАННЫЕ ИЗ БУФЕРА (ЦВЕТ) В ВЕРШИННЫЙ ШЕЙДЕР [НАЧАЛО]
+    // создаём ссылку на аттрибут
+    const colorAttribLocation = gl.getAttribLocation(program, 'vertexColor')
+
+    // Укажем, каким именно способом нужно передать данные из буфера
+    gl.vertexAttribPointer(
+      colorAttribLocation, // ссылка на аттрибут
+      3, // кол-во элементов массива на одну итерацию
+      gl.FLOAT, // тип данных
+      false,
+      6 * Float32Array.BYTES_PER_ELEMENT, // кол-во элементов массива на одну вершину
+      3 * Float32Array.BYTES_PER_ELEMENT,
+    )
+
+    gl.enableVertexAttribArray(colorAttribLocation)
+    // [НАЧАЛО]
 
     gl.clearColor(0.75, 0.9, 1.0, 1.0) // устанавливаем цвет холста
-    gl.clear(gl.COLOR_BUFFER_BIT) // очистим буффер цвета
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT) // очистим буффер цвета и буффер глубины
+    gl.enable(gl.DEPTH_TEST)
     gl.useProgram(program)
-    gl.drawArrays(gl.TRIANGLES, 0, 3) // отрисовываем фигуру при помощи данных, находящихся в буффере
+    gl.drawArrays(gl.TRIANGLES, 0, 6) // отрисовываем фигуру при помощи данных, находящихся в буффере
     // Второй аргумент (0) - это стартовый индекс массива, последний параметр - кол-во вершин
   }
 
